@@ -4,3 +4,6 @@ venv
 
 #Key folder
 keys
+
+#VSCode
+.vscode
