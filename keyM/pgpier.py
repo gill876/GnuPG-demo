@@ -3,6 +3,26 @@ import os, socket
 import gnupg
 import uuid, hashlib
 
+class Pgpier:
+
+    def __init__(self, working_dir):
+        self.wrk_dir = working_dir
+        self.gpg = gnupg.GPG(gnupghome=working_dir)
+        self.gpg.encoding = 'utf-8' #sets encoding
+
+    def key_pair(self, _name_email, _name_real, _name_comment="auto generated using gnupg.py", _key_type="RSA", _key_length=4096):
+        #generate passphrase
+        self.passphrase = hashlib.sha256(str(uuid.uuid4()).encode()).hexdigest()
+        #helper method to get key configuration
+        input_data = self.gpg.gen_key_input(key_type=_key_type, key_length=_key_length, name_real=_name_real, name_comment=_name_comment, name_email=_name_email, passphrase=self.passphrase)
+        #generation of key pair
+        self.key = self.gpg.gen_key(input_data)
+
+    def list_pub_keys(self):
+        public_keys = self.gpg.list_keys()
+        return public_keys
+    
+
 def is_connected():
     try:
         # connect to the host -- tells us if the host is actually
@@ -173,3 +193,5 @@ def delete_key(_finger_print, _private=False, _passphrase=None):
     return result
 
 #def exp_pub_key(_fingerprint)
+
+def exp_passphrase()
