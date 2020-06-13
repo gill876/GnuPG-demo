@@ -6,9 +6,12 @@ import uuid, hashlib
 class Pgpier:
 
     def __init__(self, working_dir):
-        self.wrk_dir = working_dir
+        self.wrk_dir = os.path.abspath(os.path.join(working_dir, os.pardir))
+        self.gnupghome = working_dir
         self.gpg = gnupg.GPG(gnupghome=working_dir)
         self.gpg.encoding = 'utf-8' #sets encoding
+        self.passphrase = None
+        self.fingerprint = None
 
     def key_pair(self, _name_email, _name_real, _name_comment="auto generated using gnupg.py", _key_type="RSA", _key_length=4096):
         #generate passphrase
@@ -16,7 +19,11 @@ class Pgpier:
         #helper method to get key configuration
         input_data = self.gpg.gen_key_input(key_type=_key_type, key_length=_key_length, name_real=_name_real, name_comment=_name_comment, name_email=_name_email, passphrase=self.passphrase)
         #generation of key pair
-        self.key = self.gpg.gen_key(input_data)
+        key = self.gpg.gen_key(input_data)
+        self.fingerprint = key.fingerprint
+
+    def set_passphrase(self, passphrase):
+        self.passphrase = passphrase
 
     def list_pub_keys(self):
         public_keys = self.gpg.list_keys()
@@ -194,4 +201,19 @@ def delete_key(_finger_print, _private=False, _passphrase=None):
 
 #def exp_pub_key(_fingerprint)
 
-def exp_passphrase()
+def exp_passphrase(dir, file):
+    with open('{}'.format(file), 'w') as f:
+        pass
+
+def encrypt_file(gpg, file_path, recipients, output):
+    #file_path => path and filename
+    #recipients => list of recipients
+    #output => path and filename
+    with open('{}'.format(file_path), '{}'.format('rb')) as file:
+        encrypted_ascii_data = gpg.encrypt_file(file, recipients=recipients, output=output)
+        print(encrypted_ascii_data.status)
+
+def decrypt_file(gpg, file_path, passphrase, output):
+    with open('{}'.format(file_path), '{}'.format('rb')) as file:
+        decrypted_data = gpg.decrypt_file(file, passphrase=passphrase, output=output)
+        print(decrypted_data.status)
