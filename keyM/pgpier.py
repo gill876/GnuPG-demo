@@ -211,9 +211,17 @@ def encrypt_file(gpg, file_path, recipients, output):
     #output => path and filename
     with open('{}'.format(file_path), '{}'.format('rb')) as file:
         encrypted_ascii_data = gpg.encrypt_file(file, recipients=recipients, output=output)
-        print(encrypted_ascii_data.status)
+        return encrypted_ascii_data.status
 
 def decrypt_file(gpg, file_path, passphrase, output):
     with open('{}'.format(file_path), '{}'.format('rb')) as file:
         decrypted_data = gpg.decrypt_file(file, passphrase=passphrase, output=output)
-        print(decrypted_data.status)
+        return decrypted_data.status
+
+def encrypt_data(gpg, data, recipients):
+    encrypted_ascii_data = gpg.encrypt(data, recipients=recipients)
+    return encrypted_ascii_data #str() => to get ascii
+
+def decrypt_data(gpg, data, passphrase):
+    decrypted_data = gpg.decrypt(data, passphrase=passphrase)
+    return decrypted_data
