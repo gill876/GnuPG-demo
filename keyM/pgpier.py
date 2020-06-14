@@ -12,6 +12,7 @@ class Pgpier:
         self.gpg.encoding = 'utf-8' #sets encoding
         self.passphrase = None
         self.fingerprint = None
+        self.keyid = None
 
     def key_pair(self, _name_email, _name_real, _name_comment="auto generated using gnupg.py", _key_type="RSA", _key_length=4096):
         #generate passphrase
@@ -28,6 +29,36 @@ class Pgpier:
     def list_pub_keys(self):
         public_keys = self.gpg.list_keys()
         return public_keys
+
+    def exp_passphrase(self):
+        #lists all files existing in a dir and checks if the file ends with the wrapper
+        _path = self.wrk_dir
+        _filename = self.fingerprint
+        _wrapper = '(main)'
+        _contents = self.passphrase
+
+        file_names = [file for file in os.listdir(_path) if os.path.isfile(file) and file.endswith(_wrapper)]
+        if file_names != []:
+            for file in file_names:
+
+                #removes the wrapper
+                file_name_len = len(file)
+                wrapper_len = len(_wrapper)
+                file_nowrap = file_name_len - wrapper_len
+                clean_f_name = file[0:file_nowrap]
+
+                #clean file name
+                clean_f = os.path.abspath(os.path.join(_path, clean_f_name))
+                #implement so that if the file already exists it would make a copy
+                try:
+                    #renames the file without the wrapper
+                    os.rename(file, clean_f)
+                except Exception as e:
+                    print(e)
+
+        file = os.path.abspath(os.path.join(_path, '{0}{1}'.format(_filename, _wrapper)))
+        with open('{}'.format(file), '{}'.format('w')) as f:
+            f.write(_contents)
     
 
 def is_connected():
@@ -211,12 +242,12 @@ def encrypt_file(gpg, file_path, recipients, output):
     #output => path and filename
     with open('{}'.format(file_path), '{}'.format('rb')) as file:
         encrypted_ascii_data = gpg.encrypt_file(file, recipients=recipients, output=output)
-        return encrypted_ascii_data.status
+        return encrypted_ascii_data, encrypted_ascii_data.status
 
 def decrypt_file(gpg, file_path, passphrase, output):
     with open('{}'.format(file_path), '{}'.format('rb')) as file:
         decrypted_data = gpg.decrypt_file(file, passphrase=passphrase, output=output)
-        return decrypted_data.status
+        return decrypted_data, decrypted_data.status
 
 def encrypt_data(gpg, data, recipients):
     encrypted_ascii_data = gpg.encrypt(data, recipients=recipients)
