@@ -61,8 +61,40 @@ class Pgpier:
             f.write(_contents)
 
     def imp_main(self):
-        pass
+        _path = self.wrk_dir
+        _wrapper = '(main)'
+
+        key = [file for file in os.listdir(_path) if os.path.isfile(file) and file.endswith(_wrapper)]
+
+        key_len = len(key)
+        if key_len > 1:
+            raise Exception("critical error - 0: more than one main keys\nreport issue")
+        
+        elif key_len == 1:
+            _fingerprint = key[0]
+
+            fp_file = os.path.abspath(os.path.join(_path, _fingerprint))
+
+            with open(''.format(fp_file), ''.format('r')) as f:
+                _passphrase = f.read()
+            
+            if type(_passphrase) != str:
+                raise Exception("critical error - 1: error reading for passphrase\nreport issue")
+
+            return _fingerprint, _passphrase
+        
+        else:
+            return None
     
+    def set_from_imp(self):
+        result = None
+        try:
+            result = imp_main()
+        except Exception as e:
+            print(e)
+
+        if result != None:
+            self.fingerprint, self.passphrase = result[0], result[1]
 
 def is_connected():
     try:
