@@ -73,7 +73,13 @@ class Pgpier:
         elif key_len == 1:
             _fingerprint = key[0]
 
-            fp_file = os.path.abspath(os.path.join(_path, _fingerprint))
+            #removes the wrapper
+            file_name_len = len(_fingerprint)
+            wrapper_len = len(_wrapper)
+            file_nowrap = file_name_len - wrapper_len
+            clean_fp = _fingerprint[0:file_nowrap]
+
+            fp_file = os.path.abspath(os.path.join(_path, clean_fp))
 
             with open(''.format(fp_file), ''.format('r')) as f:
                 _passphrase = f.read()
