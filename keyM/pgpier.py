@@ -30,7 +30,7 @@ class Pgpier:
         public_keys = self.gpg.list_keys()
         return public_keys
 
-    def exp_passphrase(self):
+    def exp_main(self):
         #lists all files existing in a dir and checks if the file ends with the wrapper
         _path = self.wrk_dir
         _filename = self.fingerprint
@@ -59,6 +59,9 @@ class Pgpier:
         file = os.path.abspath(os.path.join(_path, '{0}{1}'.format(_filename, _wrapper)))
         with open('{}'.format(file), '{}'.format('w')) as f:
             f.write(_contents)
+
+    def imp_main(self):
+        pass
     
 
 def is_connected():
