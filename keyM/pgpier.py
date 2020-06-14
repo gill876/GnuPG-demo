@@ -67,7 +67,7 @@ class Pgpier:
         _path = self.wrk_dir
         _wrapper = '(main)'
 
-        key = [file for file in os.listdir(_path) if os.path.isfile(file) and file.endswith(_wrapper)]
+        key = [file for file in os.listdir(_path) if file.endswith(_wrapper)]
 
         key_len = len(key)
         if key_len > 1:
@@ -82,15 +82,15 @@ class Pgpier:
             file_nowrap = file_name_len - wrapper_len
             clean_fp = _fingerprint[0:file_nowrap]
 
-            fp_file = os.path.abspath(os.path.join(_path, clean_fp))
+            fp_file = os.path.abspath(os.path.join(_path, _fingerprint))
 
-            with open(''.format(fp_file), ''.format('r')) as f:
+            with open('{}'.format(fp_file), '{}'.format('r')) as f:
                 _passphrase = f.read()
             
             if type(_passphrase) != str:
                 raise Exception("critical error - 1: error reading for passphrase\nreport issue")
 
-            return _fingerprint, _passphrase
+            return clean_fp, _passphrase
         
         else:
             return None
@@ -98,13 +98,13 @@ class Pgpier:
     def set_from_imp(self):
         result = None
         try:
-            result = imp_main()
+            result = self.imp_main()
         except Exception as e:
             print(e)
 
         if result != None:
-            set_fingerprint(result[0]) 
-            set_passphrase(result[1])
+            self.set_fingerprint(result[0]) 
+            self.set_passphrase(result[1])
 
 def is_connected():
     try:
@@ -301,3 +301,8 @@ def encrypt_data(gpg, data, recipients):
 def decrypt_data(gpg, data, passphrase):
     decrypted_data = gpg.decrypt(data, passphrase=passphrase)
     return decrypted_data
+
+gpg = Pgpier('/home/cargill/Documents/GnuPG-demo/keys/.gnupg')
+gpg.set_from_imp()
+print(gpg.fingerprint)
+print(gpg.passphrase)
