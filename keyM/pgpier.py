@@ -26,6 +26,9 @@ class Pgpier:
     def set_passphrase(self, passphrase):
         self.passphrase = passphrase
 
+    def set_fingerprint(self, fingerprint):
+        self.fingerprint = fingerprint
+
     def list_pub_keys(self):
         public_keys = self.gpg.list_keys()
         return public_keys
@@ -100,7 +103,8 @@ class Pgpier:
             print(e)
 
         if result != None:
-            self.fingerprint, self.passphrase = result[0], result[1]
+            set_fingerprint(result[0]) 
+            set_passphrase(result[1])
 
 def is_connected():
     try:
