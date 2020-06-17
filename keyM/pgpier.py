@@ -149,7 +149,9 @@ class Pgpier:
             encrypted_ascii_data = gpg.encrypt_file(file, recipients=recipients, output=output)
             return encrypted_ascii_data, encrypted_ascii_data.status
 
-    def encrypt_data(gpg, data, recipients):
+    def encrypt_data(self, data, recipients):
+        gpg = self.gpg
+
         encrypted_ascii_data = gpg.encrypt(data, recipients=recipients)
         return encrypted_ascii_data #str() => to get ascii
 
