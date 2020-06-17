@@ -131,6 +131,8 @@ class Pgpier:
             return ascii_armored_public_keys
 
     def imp_pub_key(self, key_data):
+        gpg = self.gpg
+        
         import_result = gpg.import_keys(key_data)
 
     def pub_file(self):

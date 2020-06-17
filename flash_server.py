@@ -4,6 +4,9 @@ from keyM.pgpier import *
 from flask import Flask, session, request
 import hashlib
 
+app = Flask(__name__)
+app.config['SECRET_KEY'] = hashlib.sha256(str(uuid.uuid4()).encode()).hexdigest()
+
 SERVER_NAME = 'Pgpier Server'
 SERVER_EMAIL = 'server_pgpier@gmail.com'
 SERVER_COMMENT = 'Pgpier Server created for encrypted communication'
@@ -11,11 +14,12 @@ SERVER_COMMENT = 'Pgpier Server created for encrypted communication'
 #####
 result = create_dir('svrgpg')
 if result[0] == True:
-    cli_dir = result[1]
-    gnupghome = create_dir('.gnupg', True, cli_dir)
+    svr_dir = result[1]
+    gnupghome = create_dir('.gnupg', True, svr_dir)
 
     if gnupghome[0] == True:
         gnupg_dir = gnupghome[1]
+        app.config['GPG'] = gnupg_dir
         print(gnupg_dir)
         gpg = Pgpier(gnupg_dir)
     else:
@@ -34,8 +38,6 @@ gpg.set_keyid()
 
 public_key = gpg.exp_pub_key()
 #####
-app = Flask(__name__)
-app.config['SECRET_KEY'] = hashlib.sha256(str(uuid.uuid4()).encode()).hexdigest()
 
 @app.route('/')
 def hello():
@@ -59,6 +61,13 @@ def key():
         if hashed == key_hash:
             session['client_key'] = client_key
             session['client_email'] = client_email
+            gpg = Pgpier(app.config['GPG'])
+            gpg.set_from_imp()
+            gpg.set_keyid()
+            
+            gpg.imp_pub_key(session['client_key'])
+            print(gpg.list_pub_keys())
+
         print("POST method")
     if request.method == 'GET':
         return 'hello there, I\'m from the server'.encode('utf-8')
