@@ -61,9 +61,6 @@ def key():
         if hashed == key_hash:
             session['client_key'] = client_key
             session['client_email'] = client_email
-            gpg = Pgpier(app.config['GPG'])
-            gpg.set_from_imp()
-            gpg.set_keyid()
             
             gpg.imp_pub_key(session['client_key'])
             print(gpg.list_pub_keys())
