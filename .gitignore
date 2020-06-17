@@ -10,3 +10,7 @@ keys
 
 #Python
 __pycache__
+
+#Flash Server-Client GnuPG folders
+svrgpg
+cligpg
