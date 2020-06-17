@@ -21,15 +21,22 @@ if result[0] == True:
 else:
     raise Exception('Could not create client folder')
 
+set_values = gpg.set_from_imp()
 
+if not set_values:
+    print("Generating key pairs")
+    gpg.key_pair(CLIENT_EMAIL, CLIENT_NAME, CLIENT_COMMENT)
+    gpg.exp_main()
 #gpg = Pgpier('/home/cargill/Documents/GnuPG-demo/keys/.gnupg')
 #gpg.set_from_imp()
-#gpg.set_keyid()
+gpg.set_keyid()
 
-pubkey = "public key" #gpg.exp_pub_key()
-b_hash = "public key" #pubkey
+public_key = gpg.exp_pub_key()
 
-pubhash = hashlib.sha256(b_hash.encode('utf-8')).hexdigest()
+pubkey = public_key
+tohash = pubkey
+
+pubhash = hashlib.sha256(tohash.encode('utf-8')).hexdigest()
 
 data = {'pub_key': pubkey, 'hash': pubhash}
 

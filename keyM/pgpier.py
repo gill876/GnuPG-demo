@@ -118,6 +118,9 @@ class Pgpier:
         if result != None:
             self.set_fingerprint(result[0]) 
             self.set_passphrase(result[1])
+        
+        success = True if result != None else False
+        return success
 
     def exp_pub_key(self):
         ascii_armored_public_keys = None
