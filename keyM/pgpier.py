@@ -127,6 +127,9 @@ class Pgpier:
         else:
             return ascii_armored_public_keys
 
+    def imp_pub_key(self, key_data):
+        import_result = gpg.import_keys(key_data)
+
     def pub_file(self):
         
         pub_key = self.exp_pub_key()
@@ -136,7 +139,7 @@ class Pgpier:
         pub_file = os.path.abspath(os.path.join(path, fingerprint))
 
         if pub_key != None:
-            with open('{}'.format(pub_file), '{}'.format('w')) as f:
+            with open('{0}{1}'.format(pub_file, '.asc'), '{}'.format('w')) as f:
                 f.write(pub_key)
 
 def is_connected():
