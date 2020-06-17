@@ -4,6 +4,10 @@ from keyM.pgpier import *
 from flask import Flask, session, request
 import hashlib
 
+SERVER_NAME = 'Pgpier Server'
+SERVER_EMAIL = 'server_pgpier@gmail.com'
+SERVER_COMMENT = 'Pgpier Server created for encrypted communication'
+
 app = Flask(__name__)
 
 @app.route('/')

@@ -3,6 +3,10 @@
 from keyM.pgpier import *
 import requests, hashlib
 
+CLIENT_NAME = 'Pgpier Client'
+CLIENT_EMAIL = 'client_pgpier@gmail.com'
+CLIENT_COMMENT = 'Pgpier Client created for encrypted communication'
+
 gpg = Pgpier('/home/cargill/Documents/GnuPG-demo/keys/.gnupg')
 gpg.set_from_imp()
 gpg.set_keyid()
