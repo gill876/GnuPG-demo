@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 
+from keyM.pgpier import *
 from flask import Flask, session, request
 app = Flask(__name__)
 
@@ -10,7 +11,10 @@ def hello():
 @app.route('/api/recv', methods=['POST'])
 def recv():
     if request.method == 'POST':
-        print(request.data)
+        #print(request.data)
+        #print(type(request.data))
+        key = request.data
+        print(key.decode('utf-8'))
         print("POST method")
     print("Inside /api/recv function")
     return "hello world"
