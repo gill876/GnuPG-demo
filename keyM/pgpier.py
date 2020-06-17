@@ -142,6 +142,17 @@ class Pgpier:
             with open('{0}{1}'.format(pub_file, '.asc'), '{}'.format('w')) as f:
                 f.write(pub_key)
 
+    def encrypt_file(self, file_path, recipients, output):
+        gpg = self.gpg
+
+        with open('{}'.format(file_path), '{}'.format('rb')) as file:
+            encrypted_ascii_data = gpg.encrypt_file(file, recipients=recipients, output=output)
+            return encrypted_ascii_data, encrypted_ascii_data.status
+
+    def encrypt_data(gpg, data, recipients):
+        encrypted_ascii_data = gpg.encrypt(data, recipients=recipients)
+        return encrypted_ascii_data #str() => to get ascii
+
 def is_connected():
     try:
         # connect to the host -- tells us if the host is actually
