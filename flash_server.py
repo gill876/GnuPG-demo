@@ -9,6 +9,7 @@ SERVER_EMAIL = 'server_pgpier@gmail.com'
 SERVER_COMMENT = 'Pgpier Server created for encrypted communication'
 
 app = Flask(__name__)
+app.config['SECRET_KEY'] = hashlib.sha256(str(uuid.uuid4()).encode()).hexdigest()
 
 @app.route('/')
 def hello():
@@ -17,11 +18,21 @@ def hello():
 @app.route('/api/key', methods=['POST', 'GET'])
 def key():
     if request.method == 'POST':
-        _key = request.form['pub_key']
-        _hash = request.form['hash']
-        tohash = _key
+        client_key = request.form['client_key']
+        key_hash = request.form['key_hash']
+
+        client_email = request.form['client_email']
+        email_hash = request.form['email_hash']
+
+        tohash = client_key
         hashed = hashlib.sha256(tohash.encode('utf-8')).hexdigest()
-        print(hashed == _hash)
+
+        tohash = client_email
+        hashed2 = hashlib.sha256(tohash.encode('utf-8')).hexdigest()
+        print(hashed == key_hash and hashed2 == email_hash)
+        if hashed == key_hash:
+            session['client_key'] = client_key
+            session['client_email'] = client_email
         print("POST method")
     if request.method == 'GET':
         return 'hello there, I\'m from the server'.encode('utf-8')

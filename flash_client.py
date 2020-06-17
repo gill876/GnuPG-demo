@@ -34,11 +34,14 @@ gpg.set_keyid()
 public_key = gpg.exp_pub_key()
 
 pubkey = public_key
-tohash = pubkey
 
+tohash = pubkey
 pubhash = hashlib.sha256(tohash.encode('utf-8')).hexdigest()
 
-data = {'pub_key': pubkey, 'hash': pubhash}
+tohash = CLIENT_EMAIL
+ehash = hashlib.sha256(tohash.encode('utf-8')).hexdigest()
+
+data = {'client_key': pubkey, 'key_hash': pubhash, 'client_email': CLIENT_EMAIL, 'email_hash': ehash}
 
 url = 'http://0.0.0.0:8080/api/key'
 msg = 'hello world!'
