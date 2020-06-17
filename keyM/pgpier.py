@@ -157,12 +157,18 @@ class Pgpier:
 
     def decrypt_file(self, file_path, passphrase, output):
         gpg = self.gpg
+        passphrase = self.passphrase
 
         with open('{}'.format(file_path), '{}'.format('r')) as file:
             decrypted_data = gpg.decrypt_file(file, passphrase=passphrase, output=output)
             return decrypted_data, decrypted_data.status
     
-    
+    def decrypt_data(self, data, passphrase):
+        gpg = self.gpg
+        passphrase = self.passphrase
+
+        decrypted_data = gpg.decrypt(data, passphrase=passphrase)
+        return decrypted_data
 
 def is_connected():
     try:
