@@ -119,6 +119,26 @@ class Pgpier:
             self.set_fingerprint(result[0]) 
             self.set_passphrase(result[1])
 
+    def exp_pub_key(self):
+        ascii_armored_public_keys = None
+        if self.keyid != None:
+            ascii_armored_public_keys = self.gpg.export_keys(self.keyid)
+            return ascii_armored_public_keys
+        else:
+            return ascii_armored_public_keys
+
+    def pub_file(self):
+        
+        pub_key = self.exp_pub_key()
+        fingerprint = self.fingerprint
+        path = self.wrk_dir
+
+        pub_file = os.path.abspath(os.path.join(path, fingerprint))
+
+        if pub_key != None:
+            with open('{}'.format(pub_file), '{}'.format('w')) as f:
+                f.write(pub_key)
+
 def is_connected():
     try:
         # connect to the host -- tells us if the host is actually
@@ -322,3 +342,6 @@ print(gpg.passphrase)
 gpg.set_keyid()
 print(gpg.keyid)
 print(gpg.list_pub_keys())
+pubkey = gpg.exp_pub_key()
+print(pubkey)
+gpg.pub_file()
