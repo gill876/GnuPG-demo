@@ -1,19 +1,28 @@
 #!/usr/bin/env python3
 
 from keyM.pgpier import *
-import requests
+import requests, hashlib
 
 gpg = Pgpier('/home/cargill/Documents/GnuPG-demo/keys/.gnupg')
 gpg.set_from_imp()
 gpg.set_keyid()
 
 pubkey = gpg.exp_pub_key()
+b_hash = pubkey
 
-print(pubkey)
+pubhash = hashlib.sha256(b_hash.encode('utf-8')).hexdigest()
 
-url = 'http://0.0.0.0:8080/api/recv'
+data = {'pub_key': pubkey, 'hash': pubhash}
+
+url = 'http://0.0.0.0:8080/api/key'
 msg = 'hello world!'
 
-x = requests.post(url, data = pubkey)
+#json = jsonify.jsonify(data)
+
+x = requests.post(url, data = data)
+
+y = requests.get(url)
+
+print(y.content.decode('utf-8'))
 
 print(x)

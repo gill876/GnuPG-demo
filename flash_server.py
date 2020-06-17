@@ -2,20 +2,25 @@
 
 from keyM.pgpier import *
 from flask import Flask, session, request
+import hashlib
+
 app = Flask(__name__)
 
 @app.route('/')
 def hello():
     return "Hello World!"
 
-@app.route('/api/recv', methods=['POST'])
-def recv():
+@app.route('/api/key', methods=['POST', 'GET'])
+def key():
     if request.method == 'POST':
-        #print(request.data)
-        #print(type(request.data))
-        key = request.data
-        print(key.decode('utf-8'))
+        _key = request.form['pub_key']
+        _hash = request.form['hash']
+        tohash = _key
+        hashed = hashlib.sha256(tohash.encode('utf-8')).hexdigest()
+        print(hashed == _hash)
         print("POST method")
+    if request.method == 'GET':
+        return 'hello there, I\'m from the server'.encode('utf-8')
     print("Inside /api/recv function")
     return "hello world"
 
