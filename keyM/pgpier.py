@@ -29,6 +29,19 @@ class Pgpier:
     def set_fingerprint(self, fingerprint):
         self.fingerprint = fingerprint
 
+    def set_keyid(self):
+        
+        _keyid = None
+        
+        keys = self.list_pub_keys()
+
+        if keys != []:
+            for key in keys:
+                if key['fingerprint'] == self.fingerprint:
+                    self.keyid = key['keyid']
+        else:
+            pass
+
     def list_pub_keys(self):
         public_keys = self.gpg.list_keys()
         return public_keys
@@ -306,3 +319,6 @@ gpg = Pgpier('/home/cargill/Documents/GnuPG-demo/keys/.gnupg')
 gpg.set_from_imp()
 print(gpg.fingerprint)
 print(gpg.passphrase)
+gpg.set_keyid()
+print(gpg.keyid)
+print(gpg.list_pub_keys())
