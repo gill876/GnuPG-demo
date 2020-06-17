@@ -145,7 +145,7 @@ class Pgpier:
     def encrypt_file(self, file_path, recipients, output):
         gpg = self.gpg
 
-        with open('{}'.format(file_path), '{}'.format('rb')) as file:
+        with open('{}'.format(file_path), '{}'.format('r')) as file:
             encrypted_ascii_data = gpg.encrypt_file(file, recipients=recipients, output=output)
             return encrypted_ascii_data, encrypted_ascii_data.status
 
@@ -154,6 +154,15 @@ class Pgpier:
 
         encrypted_ascii_data = gpg.encrypt(data, recipients=recipients)
         return encrypted_ascii_data #str() => to get ascii
+
+    def decrypt_file(self, file_path, passphrase, output):
+        gpg = self.gpg
+
+        with open('{}'.format(file_path), '{}'.format('r')) as file:
+            decrypted_data = gpg.decrypt_file(file, passphrase=passphrase, output=output)
+            return decrypted_data, decrypted_data.status
+    
+    
 
 def is_connected():
     try:
