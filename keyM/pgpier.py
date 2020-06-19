@@ -198,19 +198,19 @@ class Pgpier:
 
         gpg.trust_keys(fingerprint, trustlevel)
 
-    def symmetric_encrypt(self, data, passphrase, algorithm='AES256', armor=False):
+    def symmetric_encrypt(self, data, passphrase, algorithm='AES256', armor=True):
         gpg = self.gpg
 
         crypt = gpg.encrypt(data, symmetric=algorithm, passphrase=passphrase, armor=armor, recipients=None)
         #print(crypt.status)
-        return crypt.data
+        return str(crypt)
 
     def symmetric_decrypt(self, data, passphrase, algorithm='AES256'):
         gpg = self.gpg
 
         data = gpg.decrypt(data, passphrase=passphrase)
         print(data.status)
-        return data.data
+        return (data.data).decode('utf-8')
 
 
 def is_connected():
