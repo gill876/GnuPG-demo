@@ -175,6 +175,24 @@ class Pgpier:
         decrypted_data = gpg.decrypt(data, passphrase=passphrase)
         return decrypted_data
 
+    def email_to_key(self, email):
+        gpg = self.gpg
+        keys = self.list_pub_keys()
+
+        result = None
+
+        for key in keys:
+            uids = list(filter((lambda item: email in item), key['uids']))
+            if uids != []:
+                parts = uids[0].split(' ')
+                wrapped_email = list(filter((lambda item: '<' in item), parts))
+                unwrapped_email = wrapped_email[0].strip('<>')
+                if unwrapped_email == email:
+                    return key['fingerprint']
+        
+        return result
+
+
 def is_connected():
     try:
         # connect to the host -- tells us if the host is actually
