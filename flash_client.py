@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 
 from keyM.pgpier import *
-import requests, hashlib, os
+import requests, hashlib, os, json
 
 CLIENT_NAME = 'Pgpier Client'
 CLIENT_EMAIL = 'client_pgpier@gmail.com'
@@ -46,12 +46,13 @@ data = {'client_key': pubkey, 'key_hash': pubhash, 'client_email': CLIENT_EMAIL,
 url = 'http://0.0.0.0:8080/api/key'
 msg = 'hello world!'
 
-#json = jsonify.jsonify(data)
-
-x = requests.post(url, data = data)
+#x = requests.post(url, data = data)
+#print(x)
 
 y = requests.get(url)
 
-print(y.content.decode('utf-8'))
+data = y.json()
 
-print(x)
+print(data['data']['message'])
+
+#print(y.content.decode('utf-8'))

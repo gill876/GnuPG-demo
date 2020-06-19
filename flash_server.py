@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 
 from keyM.pgpier import *
-from flask import Flask, session, request
+from flask import Flask, session, request, jsonify
 import hashlib
 
 app = Flask(__name__)
@@ -63,11 +63,17 @@ def key():
             session['client_email'] = client_email
             
             gpg.imp_pub_key(session['client_key'])
-            print(gpg.list_pub_keys())
+            #print(gpg.list_pub_keys())
 
         print("POST method")
     if request.method == 'GET':
-        return 'hello there, I\'m from the server'.encode('utf-8')
+        session['nonce'] = hashlib.sha256(str(uuid.uuid4()).encode()).hexdigest()
+
+        server_key = gpg.exp_pub_key()
+        server_email = SERVER_EMAIL
+        server_nonce = session['nonce']
+        encrypted_nonce = server_nonce
+        return jsonify(data=data)
     print("Inside /api/recv function")
     return "hello world"
 
