@@ -69,18 +69,21 @@ def key():
         print("POST method")
     if request.method == 'GET':
         session['nonce'] = hashlib.sha256(str(uuid.uuid4()).encode()).hexdigest()
-
+        
         server_key = gpg.exp_pub_key()
         server_email = SERVER_EMAIL
         server_nonce = session['nonce']
-        client_email = g.client_email
+        print(server_nonce)
+        client_email = request.args.get('email')
 
         client_fingerprint = gpg.email_to_key(client_email)
+        gpg.trust_key(client_fingerprint, 'TRUST_ULTIMATE')
 
-        encrypted_nonce = gpg.encrypt_data(server_nonce, client_fingerprint)
+        encrypted_nonce = str(gpg.encrypt_data(server_nonce, client_fingerprint))
 
         data = {'server_email': server_email, 'server_key': server_key, 'encrypted_nonce': encrypted_nonce}
         return jsonify(data=data)
+
     print("Inside /api/recv function")
     return "hello world"
 

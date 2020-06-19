@@ -158,6 +158,7 @@ class Pgpier:
         gpg = self.gpg
 
         encrypted_ascii_data = gpg.encrypt(data, recipients=recipients)
+        #print(encrypted_ascii_data.status)
         return encrypted_ascii_data #str() => to get ascii
 
     def decrypt_file(self, file_path, passphrase, output):
@@ -191,6 +192,11 @@ class Pgpier:
                     return key['fingerprint']
         
         return result
+    
+    def trust_key(self, fingerprint, trustlevel='TRUST_FULLY'):
+        gpg = self.gpg
+
+        gpg.trust_keys(fingerprint, trustlevel)
 
 
 def is_connected():

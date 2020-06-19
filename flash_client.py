@@ -49,10 +49,14 @@ msg = 'hello world!'
 #x = requests.post(url, data = data)
 #print(x)
 
-y = requests.get(url)
+y = requests.get(url, params={'email': CLIENT_EMAIL})
 
 data = y.json()
+#print(data)
 
-print(data['data']['message'])
+encrypted_nonce = data['data']['encrypted_nonce']
+passphrase = gpg.passphrase
+nonce = gpg.decrypt_data(encrypted_nonce, passphrase)
+print(nonce)
 
 #print(y.content.decode('utf-8'))
