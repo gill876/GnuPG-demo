@@ -77,7 +77,7 @@ def key():
         client_email = request.args.get('email')
 
         client_fingerprint = gpg.email_to_key(client_email)
-        gpg.trust_key(client_fingerprint, 'TRUST_ULTIMATE')
+        gpg.trust_key(client_fingerprint)
 
         encrypted_nonce = str(gpg.encrypt_data(server_nonce, client_fingerprint))
 
