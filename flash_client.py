@@ -1,11 +1,15 @@
 #!/usr/bin/env python3
 
 from keyM.pgpier import *
-import requests, hashlib, os, json
+import requests, hashlib, os, random, string
 
 CLIENT_NAME = 'Pgpier Client'
 CLIENT_EMAIL = 'client_pgpier@gmail.com'
 CLIENT_COMMENT = 'Pgpier Client created for encrypted communication'
+
+def randomStringwithDigitsAndSymbols(stringLength=70):
+    password_characters = string.ascii_letters + string.digits + string.punctuation
+    return ''.join(random.choice(password_characters) for i in range(stringLength))
 
 result = create_dir('cligpg')
 if result[0] == True:
@@ -43,13 +47,15 @@ ehash = hashlib.sha256(tohash.encode('utf-8')).hexdigest()
 
 data = {'client_key': pubkey, 'key_hash': pubhash, 'client_email': CLIENT_EMAIL, 'email_hash': ehash}
 
+s = requests.Session()
+
 url = 'http://0.0.0.0:8080/api/key'
 msg = 'hello world!'
 
-#x = requests.post(url, data = data)
+x = requests.post(url, data = data)
 #print(x)
 
-y = requests.get(url, params={'email': CLIENT_EMAIL})
+y = s.get(url, params={'email': CLIENT_EMAIL})
 
 data = y.json()
 #print(data)
@@ -57,6 +63,34 @@ data = y.json()
 encrypted_nonce = data['data']['encrypted_nonce']
 passphrase = gpg.passphrase
 nonce = gpg.decrypt_data(encrypted_nonce, passphrase)
+nonce = nonce.data.decode()
 print(nonce)
 
+server_email = data['data']['server_email']
+server_key = data['data']['server_key']
+
+gpg.imp_pub_key(server_key)
+server_fingerprint = gpg.email_to_key(server_email)
+gpg.trust_key(server_fingerprint, 'TRUST_ULTIMATE')
+
+################
+
 #print(y.content.decode('utf-8'))
+url = 'http://0.0.0.0:8080/api/validation'
+
+hashed = hashlib.sha256(nonce.encode('utf-8')).hexdigest()
+message = nonce
+
+symmetric_key = randomStringwithDigitsAndSymbols()
+print("symmetric key: ", symmetric_key)
+
+mdigest = hashed + '.' + message
+
+encrypted_mdigest = gpg.symmetric_encrypt(mdigest, symmetric_key)
+
+encrypted_symm_key = str(gpg.encrypt_data(symmetric_key, server_fingerprint))
+
+data = {'encrypted_mdigest': encrypted_mdigest, 'encrypted_symm_key': encrypted_symm_key}
+
+x = s.post(url, data=data)
+print(x)

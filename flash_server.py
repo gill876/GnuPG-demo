@@ -87,5 +87,30 @@ def key():
     print("Inside /api/recv function")
     return "hello world"
 
+@app.route('/api/validation', methods=['POST', 'GET'])
+def validate():
+    if request.method == 'POST':
+        print("What the server sent", session['nonce'])
+        encrypted_mdigest = request.form['encrypted_mdigest']
+
+        encrypted_symm_key = request.form['encrypted_symm_key']
+
+        passphrase = gpg.passphrase
+        decrypted_symm_key = gpg.decrypt_data(encrypted_symm_key, passphrase)
+        decrypted_symm_key = (decrypted_symm_key.data).decode()
+
+        print("symmetric key: ", decrypted_symm_key)
+
+        mdigest = gpg.symmetric_decrypt(encrypted_mdigest, decrypted_symm_key)
+
+        parts = str(mdigest).split('.')
+        hashed = parts[0]
+        message = parts[1]
+        print(hashed == hashlib.sha256(message.encode('utf-8')).hexdigest())
+
+        print("nonce from client: ", message)
+        
+    return "validation route"
+
 if __name__ == '__main__':
     app.run(debug=True, host="0.0.0.0", port=8080)
