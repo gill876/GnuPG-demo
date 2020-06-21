@@ -11,11 +11,12 @@ $ source venv/bin/activate
 ```
 $ pip3 install -r requirements.txt
 ```
-3. Run `flask_server.py` first.
+3. Run `flask_server.py` first in one terminal tab.
 ```
 $ python3 flask_server.py
 ```
-4. Then run `flask_client.py`.
+4. Then run `flask_client.py` in another terminal tab, while watching the previous
+tab simultaneously.
 ```
 $ python3 flask_client.py
 ```
