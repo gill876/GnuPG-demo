@@ -1,5 +1,24 @@
 # GnuPG-demo
-Implementation of GnuPG using a python module
+Implementation of GnuPG using python-gnupg.
+
+### Usage
+1. Create and activate python virtual environment.
+```
+$ python3 -m venv venv
+$ source venv/bin/activate
+```
+2. Install requirements.
+```
+$ pip3 install -r requirements.txt
+```
+3. Run `flask_server.py` first.
+```
+$ python3 flask_server.py
+```
+4. Then run `flask_client.py`.
+```
+$ python3 flask_client.py
+```
 
 
 ### Resources
