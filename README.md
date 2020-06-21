@@ -30,3 +30,4 @@ $ python3 flask_client.py
 * [How To Verify Code and Encrypt Data with Python-GnuPG and Python 3](https://www.digitalocean.com/community/tutorials/how-to-verify-code-and-encrypt-data-with-python-gnupg-and-python-3)
 * [GnuPG documentation](https://github.com/gpg/gnupg/tree/master/doc)
 * [Check internet connectivity](https://stackoverflow.com/a/40283805/10361668)
+* [Generate random password: strings, digits, special characters](https://pynative.com/python-generate-random-string/)
