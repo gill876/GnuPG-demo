@@ -63,8 +63,8 @@ data = y.json()
 encrypted_nonce = data['data']['encrypted_nonce']
 passphrase = gpg.passphrase
 nonce = gpg.decrypt_data(encrypted_nonce, passphrase)
-nonce = nonce.data.decode()
-print(nonce)
+print("Nonce type: ", type(nonce))
+print("Server nonce: ", nonce)
 
 server_email = data['data']['server_email']
 server_key = data['data']['server_key']
@@ -88,7 +88,7 @@ mdigest = hashed + '.' + message
 
 encrypted_mdigest = gpg.symmetric_encrypt(mdigest, symmetric_key)
 
-encrypted_symm_key = str(gpg.encrypt_data(symmetric_key, server_fingerprint))
+encrypted_symm_key = gpg.encrypt_data(symmetric_key, server_fingerprint)
 
 data = {'encrypted_mdigest': encrypted_mdigest, 'encrypted_symm_key': encrypted_symm_key}
 

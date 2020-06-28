@@ -290,13 +290,14 @@ class Pgpier:
             recipients (int): Fingerprint of recipient
 
         Returns:
-            Crypt (obj): Crypt object. Use str() to get the ASCII
+            str: encrypted data in ASCII string
         """
         gpg = self.gpg
 
         encrypted_ascii_data = gpg.encrypt(data, recipients=recipients)
         #print(encrypted_ascii_data.status)
-        return encrypted_ascii_data #str() => to get ascii
+        ascii_str = str(encrypted_ascii_data)
+        return ascii_str
 
     def decrypt_file(self, file_path, passphrase, output):
         """Method to decrypt data from ASCII by using the user's private key
@@ -323,14 +324,15 @@ class Pgpier:
             passphrase (str): Passphrase of the user
 
         Returns:
-            Crypt (obj): Crypt object. obj.data to get the decrypted data in bytes. (obj.data).decode() to get 
-            decrypted data into string
+            str: Decrypted data into string
         """
         gpg = self.gpg
         passphrase = self.passphrase
 
         decrypted_data = gpg.decrypt(data, passphrase=passphrase)
-        return decrypted_data
+
+        data = (decrypted_data.data).decode('utf-8')
+        return data
 
     def email_to_key(self, email):
         """Method to retrieve fingerprint of associated email address from the GnuPG keyring
@@ -399,6 +401,9 @@ class Pgpier:
             data (str): Data in ASCII string to be decrypted
             passphrase (str): Passphrase used in the encryption
             algorithm (str): The type of algorithm used to encrypt the data
+        
+        Returns:
+            str: ASCII string of decrypted data
         """
         gpg = self.gpg
 
@@ -406,7 +411,7 @@ class Pgpier:
         #print(data.status)
         return (data.data).decode('utf-8')
     
-    def TEST_ONLY_delete_key(self):
+    def _TEST_ONLY_delete_key(self):
         self.gpg.delete_keys(self.fingerprint, True, passphrase=self.passphrase)
         self.gpg.delete_keys(self.fingerprint)
 
