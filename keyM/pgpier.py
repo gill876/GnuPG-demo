@@ -103,13 +103,13 @@ class Pgpier:
         public_keys = self.gpg.list_keys()
         return public_keys
 
-    def exp_main(self):
+    def exp_main(self, _wrapper='(main)'):
         """Method to store the passphrase for future retrieval and name the file by the fingerprint of the 
         class. The method also adds a wrapper to the name of the file so that when the Pgpier class is looking
         for the public private key pair, it finds the pair it owns
 
         Args:
-            None
+            _wrapper (str): The name of the wrapper
 
         Returns:
             None
@@ -117,7 +117,7 @@ class Pgpier:
         #lists all files existing in a dir and checks if the file ends with the wrapper
         _path = self.wrk_dir
         _filename = self.fingerprint
-        _wrapper = '(main)'
+        #_wrapper = '(main)'
         _contents = self.passphrase
 
         file_names = [file for file in os.listdir(_path) if os.path.isfile(file) and file.endswith(_wrapper)]
@@ -143,13 +143,13 @@ class Pgpier:
         with open('{}'.format(file), '{}'.format('w')) as f:
             f.write(_contents)
 
-    def imp_main(self):
+    def imp_main(self, _wrapper='(main)'):
         """Method to import the fingerprint and passphrase of the owned public private key pair of the
         user. The method also looks for a wrapper on the file to distinguish the public private key 
         pair the user currently owns. 
 
         Args:
-            None
+            _wrapper (str): The name of the wrapper
 
         Returns:
             tuple: String of fingerprint and string of passphrase if it finds the public private key pairs
@@ -159,7 +159,7 @@ class Pgpier:
         """
 
         _path = self.wrk_dir #path to parent directory of gnupg home, where Pgpier will operate its own files
-        _wrapper = '(main)'
+        #_wrapper = '(main)'
 
         key = [_file for _file in os.listdir(_path) if _file.endswith(_wrapper)] #returns list of files if it ends with the wrapper
 
@@ -189,7 +189,7 @@ class Pgpier:
         else:
             return None
     
-    def set_from_imp(self):
+    def set_from_imp(self, wrapper='(main)'):
         """Method to get the fingerprint and passphrase the user currently owns and then
         assign those values inside the class to utilize the user's public private key pair
 
@@ -202,7 +202,7 @@ class Pgpier:
         """
         result = None
         try:
-            result = self.imp_main()
+            result = self.imp_main(wrapper)
         except Exception as e:
             print(e)
 
@@ -405,6 +405,10 @@ class Pgpier:
         data = gpg.decrypt(data, passphrase=passphrase)
         #print(data.status)
         return (data.data).decode('utf-8')
+    
+    def TEST_ONLY_delete_key(self):
+        self.gpg.delete_keys(self.fingerprint, True, passphrase=self.passphrase)
+        self.gpg.delete_keys(self.fingerprint)
 
 
 def is_connected():
