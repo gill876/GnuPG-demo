@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
-import os, socket
+import socket
 import gnupg
-import uuid, hashlib
+import uuid, hashlib, os, random, string
 
 class Pgpier:
     """A class that handles encryption and decryption using the python-gnupg module
@@ -410,6 +410,10 @@ class Pgpier:
         data = gpg.decrypt(data, passphrase=passphrase)
         #print(data.status)
         return (data.data).decode('utf-8')
+    
+    def gen_symm_key(self, stringLength=70):
+        password_characters = string.ascii_letters + string.digits + string.punctuation
+        return ''.join(random.choice(password_characters) for i in range(stringLength))
     
     def _TEST_ONLY_delete_key(self):
         self.gpg.delete_keys(self.fingerprint, True, passphrase=self.passphrase)

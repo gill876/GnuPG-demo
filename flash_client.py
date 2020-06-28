@@ -81,7 +81,7 @@ url = 'http://0.0.0.0:8080/api/validation'
 hashed = hashlib.sha256(nonce.encode('utf-8')).hexdigest()
 message = nonce
 
-symmetric_key = randomStringwithDigitsAndSymbols()
+symmetric_key = gpg.gen_symm_key()
 print("symmetric key: ", symmetric_key)
 
 mdigest = hashed + '.' + message
