@@ -59,9 +59,9 @@ def key():
         hashed2 = hashlib.sha256(tohash.encode('utf-8')).hexdigest()
         print(hashed == key_hash and hashed2 == email_hash)
         if hashed == key_hash:
-            g.client_key = client_key
-            g.client_email = client_email
-            print("from session", g.client_email)
+            session['client_key'] = client_key
+            session['client_email'] = client_email
+            print("from session", session['client_email'])
             
             gpg.imp_pub_key(g.client_key)
             #print(gpg.list_pub_keys())
@@ -79,7 +79,7 @@ def key():
         client_fingerprint = gpg.email_to_key(client_email)
         gpg.trust_key(client_fingerprint)
 
-        encrypted_nonce = str(gpg.encrypt_data(server_nonce, client_fingerprint))
+        encrypted_nonce = gpg.encrypt_data(server_nonce, client_fingerprint)
 
         data = {'server_email': server_email, 'server_key': server_key, 'encrypted_nonce': encrypted_nonce}
         return jsonify(data=data)
@@ -97,13 +97,12 @@ def validate():
 
         passphrase = gpg.passphrase
         decrypted_symm_key = gpg.decrypt_data(encrypted_symm_key, passphrase)
-        decrypted_symm_key = (decrypted_symm_key.data).decode()
 
         print("symmetric key: ", decrypted_symm_key)
 
         mdigest = gpg.symmetric_decrypt(encrypted_mdigest, decrypted_symm_key)
 
-        parts = str(mdigest).split('.')
+        parts = mdigest.split('.')
         hashed = parts[0]
         message = parts[1]
         print(hashed == hashlib.sha256(message.encode('utf-8')).hexdigest())

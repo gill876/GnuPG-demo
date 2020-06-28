@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
-import os, socket
+import socket
 import gnupg
-import uuid, hashlib
+import uuid, hashlib, os, random, string
 
 class Pgpier:
     """A class that handles encryption and decryption using the python-gnupg module
@@ -103,13 +103,13 @@ class Pgpier:
         public_keys = self.gpg.list_keys()
         return public_keys
 
-    def exp_main(self):
+    def exp_main(self, _wrapper='(main)'):
         """Method to store the passphrase for future retrieval and name the file by the fingerprint of the 
         class. The method also adds a wrapper to the name of the file so that when the Pgpier class is looking
         for the public private key pair, it finds the pair it owns
 
         Args:
-            None
+            _wrapper (str): The name of the wrapper
 
         Returns:
             None
@@ -117,7 +117,7 @@ class Pgpier:
         #lists all files existing in a dir and checks if the file ends with the wrapper
         _path = self.wrk_dir
         _filename = self.fingerprint
-        _wrapper = '(main)'
+        #_wrapper = '(main)'
         _contents = self.passphrase
 
         file_names = [file for file in os.listdir(_path) if os.path.isfile(file) and file.endswith(_wrapper)]
@@ -143,13 +143,13 @@ class Pgpier:
         with open('{}'.format(file), '{}'.format('w')) as f:
             f.write(_contents)
 
-    def imp_main(self):
+    def imp_main(self, _wrapper='(main)'):
         """Method to import the fingerprint and passphrase of the owned public private key pair of the
         user. The method also looks for a wrapper on the file to distinguish the public private key 
         pair the user currently owns. 
 
         Args:
-            None
+            _wrapper (str): The name of the wrapper
 
         Returns:
             tuple: String of fingerprint and string of passphrase if it finds the public private key pairs
@@ -159,7 +159,7 @@ class Pgpier:
         """
 
         _path = self.wrk_dir #path to parent directory of gnupg home, where Pgpier will operate its own files
-        _wrapper = '(main)'
+        #_wrapper = '(main)'
 
         key = [_file for _file in os.listdir(_path) if _file.endswith(_wrapper)] #returns list of files if it ends with the wrapper
 
@@ -189,7 +189,7 @@ class Pgpier:
         else:
             return None
     
-    def set_from_imp(self):
+    def set_from_imp(self, wrapper='(main)'):
         """Method to get the fingerprint and passphrase the user currently owns and then
         assign those values inside the class to utilize the user's public private key pair
 
@@ -202,7 +202,7 @@ class Pgpier:
         """
         result = None
         try:
-            result = self.imp_main()
+            result = self.imp_main(wrapper)
         except Exception as e:
             print(e)
 
@@ -290,13 +290,14 @@ class Pgpier:
             recipients (int): Fingerprint of recipient
 
         Returns:
-            Crypt (obj): Crypt object. Use str() to get the ASCII
+            str: encrypted data in ASCII string
         """
         gpg = self.gpg
 
         encrypted_ascii_data = gpg.encrypt(data, recipients=recipients)
         #print(encrypted_ascii_data.status)
-        return encrypted_ascii_data #str() => to get ascii
+        ascii_str = str(encrypted_ascii_data)
+        return ascii_str
 
     def decrypt_file(self, file_path, passphrase, output):
         """Method to decrypt data from ASCII by using the user's private key
@@ -323,14 +324,15 @@ class Pgpier:
             passphrase (str): Passphrase of the user
 
         Returns:
-            Crypt (obj): Crypt object. obj.data to get the decrypted data in bytes. (obj.data).decode() to get 
-            decrypted data into string
+            str: Decrypted data into string
         """
         gpg = self.gpg
         passphrase = self.passphrase
 
         decrypted_data = gpg.decrypt(data, passphrase=passphrase)
-        return decrypted_data
+
+        data = (decrypted_data.data).decode('utf-8')
+        return data
 
     def email_to_key(self, email):
         """Method to retrieve fingerprint of associated email address from the GnuPG keyring
@@ -399,12 +401,23 @@ class Pgpier:
             data (str): Data in ASCII string to be decrypted
             passphrase (str): Passphrase used in the encryption
             algorithm (str): The type of algorithm used to encrypt the data
+        
+        Returns:
+            str: ASCII string of decrypted data
         """
         gpg = self.gpg
 
         data = gpg.decrypt(data, passphrase=passphrase)
         #print(data.status)
         return (data.data).decode('utf-8')
+    
+    def gen_symm_key(self, stringLength=70):
+        password_characters = string.ascii_letters + string.digits + string.punctuation
+        return ''.join(random.choice(password_characters) for i in range(stringLength))
+    
+    def _TEST_ONLY_delete_key(self):
+        self.gpg.delete_keys(self.fingerprint, True, passphrase=self.passphrase)
+        self.gpg.delete_keys(self.fingerprint)
 
 
 def is_connected():
