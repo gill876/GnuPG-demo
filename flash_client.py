@@ -63,7 +63,7 @@ data = y.json()
 encrypted_nonce = data['data']['encrypted_nonce']
 passphrase = gpg.passphrase
 nonce = gpg.decrypt_data(encrypted_nonce, passphrase)
-print("Nonce type: ", type(nonce))
+
 print("Server nonce: ", nonce)
 
 server_email = data['data']['server_email']
