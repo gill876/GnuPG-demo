@@ -265,8 +265,8 @@ class Pgpier:
             with open('{0}{1}'.format(pub_file, '.asc'), '{}'.format('w')) as f:
                 f.write(pub_key)
 
-    def encrypt_files(self, file_path, recipients, output, delaf=False):
-        """Method to encrypted file using the imported recipient's public key from user's GnuPG keyring
+    def sym_encrypt_files(self, symmetric_key, file_path, output, delaf=False, algorithm='AES256', armor=True):
+        """Method to encrypted file using a symmetric key
 
         Args:
             file_path (str): Absolute file path to the files to be encrypted
@@ -274,15 +274,29 @@ class Pgpier:
             output (str): Absolute file path to intended file output
             delaf (bool): True if the files should be deleted after encryption
                           Fasle if the files should be kept after encryption
+            algorithm (str): The type of algorithm to be used to encrypte the data
+            armor (bool): True for the return type to be in ASCII string
+                          False for the return type to be Crypt object
 
         Returns:
             tuple: String of encrypted data in ASCII and status of the encryption
         """
         gpg = self.gpg
 
-        with open('{}'.format(file_path), '{}'.format('r')) as _file:
-            encrypted_ascii_data = gpg.encrypt_file(_file, recipients=recipients, output=output)
-            return encrypted_ascii_data, encrypted_ascii_data.status
+        files_dir = []
+
+        files = [f for f in os.listdir(file_path)]
+        
+        for f in files:
+            files_dir.append('{}'.format(f))
+
+        for x in files_dir:
+            with open('{}{}{}'.format(file_path, os.sep, x), '{}'.format('r')) as f:
+                crypt = gpg.encrypt_file(f, symmetric=algorithm, passphrase=symmetric_key, armor=armor, recipients=None, output='{}{}{}'.format(file_path, os.sep, files_dir[files_dir.index(x)]))
+                print("ok: ", crypt.ok)
+                print("status: ", crypt.status)
+                print("stderr: ", crypt.stderr)
+                os.rename('{}{}{}'.format(file_path, os.sep, files_dir[files_dir.index(x)]), '{}{}{}'.format(output, os.sep, files_dir[files_dir.index(x)]))
 
     def encrypt_data(self, data, recipients):
         """Method to encrypt data using the imported recipient's public key from user's GnuPG keyring
@@ -385,7 +399,8 @@ class Pgpier:
             data (str): String of data to be encrypted
             passphrase (str): String of passphrase to be used to encrypte the data
             algorithm (str): The type of algorithm to be used to encrypte the data
-            armor (bool): True is the return type is supposed to be in ASCII string or Crypt object
+            armor (bool): True for the return type to be in ASCII string
+                          False for the return type to be Crypt object
 
         Returns:
             str: ASCII string of encrypted data
