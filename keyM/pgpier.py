@@ -265,13 +265,15 @@ class Pgpier:
             with open('{0}{1}'.format(pub_file, '.asc'), '{}'.format('w')) as f:
                 f.write(pub_key)
 
-    def encrypt_file(self, file_path, recipients, output):
+    def encrypt_files(self, file_path, recipients, output, delaf=False):
         """Method to encrypted file using the imported recipient's public key from user's GnuPG keyring
 
         Args:
-            file_path (str): Absolute file path to the file with the filename 
+            file_path (str): Absolute file path to the files to be encrypted
             recipients (int): Fingerprint of recipient
             output (str): Absolute file path to intended file output
+            delaf (bool): True if the files should be deleted after encryption
+                          Fasle if the files should be kept after encryption
 
         Returns:
             tuple: String of encrypted data in ASCII and status of the encryption
