@@ -7,10 +7,6 @@ CLIENT_NAME = 'Pgpier Client'
 CLIENT_EMAIL = 'client_pgpier@gmail.com'
 CLIENT_COMMENT = 'Pgpier Client created for encrypted communication'
 
-def randomStringwithDigitsAndSymbols(stringLength=70):
-    password_characters = string.ascii_letters + string.digits + string.punctuation
-    return ''.join(random.choice(password_characters) for i in range(stringLength))
-
 result = create_dir('cligpg')
 if result[0] == True:
     cli_dir = result[1]
