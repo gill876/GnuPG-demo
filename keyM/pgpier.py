@@ -80,13 +80,12 @@ class Pgpier:
             None
         """
         
-        _keyid = None
-        
         keys = self.list_pub_keys()
+        fingerprint = self.fingerprint
 
         if keys != []:
             for key in keys:
-                if key['fingerprint'] == self.fingerprint:
+                if key['fingerprint'] == fingerprint:
                     self.keyid = key['keyid']#set keyid associated with fingerprint in class
         else:
             pass
@@ -120,27 +119,27 @@ class Pgpier:
         #_wrapper = '(main)'
         _contents = self.passphrase
 
-        file_names = [file for file in os.listdir(_path) if os.path.isfile(file) and file.endswith(_wrapper)]
+        file_names = [f for f in os.listdir(_path) if os.path.isfile(f) and f.endswith(_wrapper)]
         if file_names != []:
-            for file in file_names:
+            for f in file_names:
 
                 #removes the wrapper
-                file_name_len = len(file)
+                file_name_len = len(f)
                 wrapper_len = len(_wrapper)
                 file_nowrap = file_name_len - wrapper_len
-                clean_f_name = file[0:file_nowrap]
+                clean_f_name = f[0:file_nowrap]
 
                 #clean file name
                 clean_f = os.path.abspath(os.path.join(_path, clean_f_name))
                 #implement so that if the file already exists it would make a copy
                 try:
                     #renames the file without the wrapper
-                    os.rename(file, clean_f)
+                    os.rename(f, clean_f)
                 except Exception as e:
                     print(e)
 
-        file = os.path.abspath(os.path.join(_path, '{0}{1}'.format(_filename, _wrapper)))
-        with open('{}'.format(file), '{}'.format('w')) as f:
+        _file = os.path.abspath(os.path.join(_path, '{0}{1}'.format(_filename, _wrapper)))
+        with open('{}'.format(_file), '{}'.format('w')) as f:
             f.write(_contents)
 
     def imp_main(self, _wrapper='(main)'):
