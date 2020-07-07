@@ -342,23 +342,17 @@ class Pgpier:
 
         for x in files_dir:
             with open('{}{}{}'.format(file_path, os.sep, x), '{}'.format('r')) as f:
-                #crypt = gpg.decrypt_file(f, passphrase=symmetric_key, output='{}{}{}'.format(file_path, os.sep, files_dir[files_dir.index(x)]))
                 crypt = f.read()
-                print(crypt)
-                
-                #data = gpg.decrypt(crypt, passphrase=symmetric_key, always_trust=True)
-                #print((data.data).decode('utf-8'))
+                #print(crypt)
+                data = gpg.decrypt(crypt, passphrase=symmetric_key)
+                de_data = (data.data).decode('utf-8')
+                #print('\n\n\n\n--->{}<---\n\n\n'.format(de_data))
+                with open('{}{}{}'.format(output, os.sep, files_dir[files_dir.index(x)]), '{}'.format('w')) as decrypted:
+                    decrypted.write(de_data)
                 #print("ok: ", data.ok)
                 #print("status: ", data.status)
                 #print("stderr: ", data.stderr)
-                data = gpg.decrypt(crypt, passphrase=symmetric_key)
-                print('\n\n\n\n--->{}<---\n\n\n'.format(data.data))
-                print("ok: ", data.ok)
-                print("status: ", data.status)
-                print("stderr: ", data.stderr)
-                """ (data.data).decode('utf-8')
-                os.rename('{}{}{}'.format(file_path, os.sep, files_dir[files_dir.index(x)]), '{}{}{}'.format(output, os.sep, files_dir[files_dir.index(x)])) """
-    
+            os.remove('{}{}{}'.format(file_path, os.sep, x))    
     def decrypt_data(self, data, passphrase):
         """Method to decrypt data using the imported recipient's public key from user's GnuPG keyring
 
