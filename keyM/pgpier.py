@@ -20,7 +20,7 @@ class Pgpier:
         """
         self.wrk_dir = os.path.abspath(os.path.join(working_dir, os.pardir)) #gets the parent of the working directory
         self.gnupghome = working_dir
-        self.gpg = gnupg.GPG(gnupghome=working_dir)
+        self.gpg = gnupg.GPG(gnupghome=working_dir) # , options=['--pinentry-mode=loopback']
         self.gpg.encoding = 'utf-8' #sets encoding
         self.passphrase = None
         self.fingerprint = None
