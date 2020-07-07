@@ -265,20 +265,20 @@ class Pgpier:
                 f.write(pub_key)
 
     def sym_encrypt_files(self, symmetric_key, file_path, output, delaf=False, algorithm='AES256', armor=True):
-        """Method to encrypted file using a symmetric key
+        """Method to encrypt files using a symmetric key
 
         Args:
+            symmetric_key (str): String of passphrase to be used to encrypt the data
             file_path (str): Absolute file path to the files to be encrypted
-            recipients (int): Fingerprint of recipient
             output (str): Absolute file path to intended file output
             delaf (bool): True if the files should be deleted after encryption
                           Fasle if the files should be kept after encryption
-            algorithm (str): The type of algorithm to be used to encrypte the data
+            algorithm (str): The type of algorithm to be used to encrypt the data
             armor (bool): True for the return type to be in ASCII string
                           False for the return type to be Crypt object
 
         Returns:
-            tuple: String of encrypted data in ASCII and status of the encryption
+            None
         """
         gpg = self.gpg
 
@@ -292,10 +292,10 @@ class Pgpier:
         for x in files_dir:
             with open('{}{}{}'.format(file_path, os.sep, x), '{}'.format('r')) as f:
                 crypt = gpg.encrypt_file(f, symmetric=algorithm, passphrase=symmetric_key, armor=armor, recipients=None, output='{}{}{}'.format(file_path, os.sep, files_dir[files_dir.index(x)]))
-                print("ok: ", crypt.ok)
-                print("status: ", crypt.status)
-                print("stderr: ", crypt.stderr)
-                os.rename('{}{}{}'.format(file_path, os.sep, files_dir[files_dir.index(x)]), '{}{}{}'.format(output, os.sep, files_dir[files_dir.index(x)]))
+                #print("ok: ", crypt.ok)
+                #print("status: ", crypt.status)
+                #print("stderr: ", crypt.stderr)
+            os.rename('{}{}{}'.format(file_path, os.sep, files_dir[files_dir.index(x)]), '{}{}{}'.format(output, os.sep, files_dir[files_dir.index(x)]))
 
     def encrypt_data(self, data, recipients):
         """Method to encrypt data using the imported recipient's public key from user's GnuPG keyring
@@ -314,22 +314,49 @@ class Pgpier:
         ascii_str = str(encrypted_ascii_data)
         return ascii_str
 
-    def decrypt_file(self, file_path, passphrase, output):
-        """Method to decrypt data from ASCII by using the user's private key
+    def sym_decrypt_files(self, symmetric_key, file_path, output, delaf=False):
+        """Method to decrypt files using a symmetric key
 
         Args:
-            file_path (str): Absolute file path and filename
-            passphrase (str): Passphrase of the user
+            symmetric_key (str): String of passphrase to be used to decrypt the data
+            file_path (str): Absolute file path to the files to be encrypted
+            output (str): Absolute file path to intended file output
+            delaf (bool): True if the files should be deleted after decryption
+                          Fasle if the files should be kept after decryption
+            algorithm (str): The type of algorithm that was used to encrypt the data
+            armor (bool): True for the return type to be in ASCII string
+                          False for the return type to be Crypt object
 
         Returns:
-            tuple: Decrypted data and status of decrytion
+            None
         """
         gpg = self.gpg
-        passphrase = self.passphrase
 
-        with open('{}'.format(file_path), '{}'.format('r')) as _file:
-            decrypted_data = gpg.decrypt_file(_file, passphrase=passphrase, output=output)
-            return decrypted_data, decrypted_data.status
+        files_dir = []
+
+        files = [f for f in os.listdir(file_path)]
+        
+        for f in files:
+            files_dir.append('{}'.format(f))
+
+        for x in files_dir:
+            with open('{}{}{}'.format(file_path, os.sep, x), '{}'.format('r')) as f:
+                #crypt = gpg.decrypt_file(f, passphrase=symmetric_key, output='{}{}{}'.format(file_path, os.sep, files_dir[files_dir.index(x)]))
+                crypt = f.read()
+                print(crypt)
+                
+                #data = gpg.decrypt(crypt, passphrase=symmetric_key, always_trust=True)
+                #print((data.data).decode('utf-8'))
+                #print("ok: ", data.ok)
+                #print("status: ", data.status)
+                #print("stderr: ", data.stderr)
+                data = gpg.decrypt(crypt, passphrase=symmetric_key)
+                print('\n\n\n\n--->{}<---\n\n\n'.format(data.data))
+                print("ok: ", data.ok)
+                print("status: ", data.status)
+                print("stderr: ", data.stderr)
+                """ (data.data).decode('utf-8')
+                os.rename('{}{}{}'.format(file_path, os.sep, files_dir[files_dir.index(x)]), '{}{}{}'.format(output, os.sep, files_dir[files_dir.index(x)])) """
     
     def decrypt_data(self, data, passphrase):
         """Method to decrypt data using the imported recipient's public key from user's GnuPG keyring
@@ -396,7 +423,7 @@ class Pgpier:
 
         Args:
             data (str): String of data to be encrypted
-            passphrase (str): String of passphrase to be used to encrypte the data
+            passphrase (str): String of passphrase to be used to encrypt the data
             algorithm (str): The type of algorithm to be used to encrypte the data
             armor (bool): True for the return type to be in ASCII string
                           False for the return type to be Crypt object
@@ -410,13 +437,12 @@ class Pgpier:
         #print(crypt.status)
         return str(crypt)
 
-    def symmetric_decrypt(self, data, passphrase, algorithm='AES256'):
+    def symmetric_decrypt(self, data, passphrase):
         """Method to decrypt data that was encrypted using symmetric encryption
 
         Args:
             data (str): Data in ASCII string to be decrypted
             passphrase (str): Passphrase used in the encryption
-            algorithm (str): The type of algorithm used to encrypt the data
         
         Returns:
             str: ASCII string of decrypted data
