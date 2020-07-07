@@ -352,7 +352,8 @@ class Pgpier:
                 #print("ok: ", data.ok)
                 #print("status: ", data.status)
                 #print("stderr: ", data.stderr)
-            os.remove('{}{}{}'.format(file_path, os.sep, x))    
+            if delaf:
+                os.remove('{}{}{}'.format(file_path, os.sep, x))    
     def decrypt_data(self, data, passphrase):
         """Method to decrypt data using the imported recipient's public key from user's GnuPG keyring
 
@@ -382,11 +383,12 @@ class Pgpier:
             None: If no associated fingerprint is found
         """
         gpg = self.gpg
+        # Gets all available public keys in keyring
         keys = self.list_pub_keys()
 
         result = None
 
-        for key in keys:
+        for key in keys: # Go through each public key
             uids = list(filter((lambda item: email in item), key['uids']))
             if uids != []:
                 parts = uids[0].split(' ')
