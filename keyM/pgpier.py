@@ -291,7 +291,8 @@ class Pgpier:
 
         for x in files_dir:
             with open('{}{}{}'.format(file_path, os.sep, x), '{}'.format('r')) as f:
-                crypt = gpg.encrypt_file(f, symmetric=algorithm, passphrase=symmetric_key, armor=armor, recipients=None, output='{}{}{}'.format(file_path, os.sep, files_dir[files_dir.index(x)]))
+                contents = f.read()
+                crypt = gpg.encrypt(contents, symmetric=algorithm, passphrase=symmetric_key, armor=armor, recipients=None, output='{}{}{}'.format(file_path, os.sep, files_dir[files_dir.index(x)]))
                 #print("ok: ", crypt.ok)
                 #print("status: ", crypt.status)
                 #print("stderr: ", crypt.stderr)
