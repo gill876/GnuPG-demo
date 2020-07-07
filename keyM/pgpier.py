@@ -296,7 +296,8 @@ class Pgpier:
                 #print("ok: ", crypt.ok)
                 #print("status: ", crypt.status)
                 #print("stderr: ", crypt.stderr)
-            os.rename('{}{}{}'.format(file_path, os.sep, files_dir[files_dir.index(x)]), '{}{}{}'.format(output, os.sep, files_dir[files_dir.index(x)]))
+            if delaf:
+                os.rename('{}{}{}'.format(file_path, os.sep, files_dir[files_dir.index(x)]), '{}{}{}'.format(output, os.sep, files_dir[files_dir.index(x)]))
 
     def encrypt_data(self, data, recipients):
         """Method to encrypt data using the imported recipient's public key from user's GnuPG keyring
