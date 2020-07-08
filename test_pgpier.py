@@ -187,7 +187,29 @@ class TestEncrypt(unittest.TestCase):
         self.assertIsNotNone(keyid1)
         self.assertIsNotNone(keyid2)
 
+    def test_list_pub_keys(self):
+        print("***List public keys test***")
 
+        keys_lst1 = self.gpg1.list_pub_keys()
+        keys_lst2 = self.gpg2.list_pub_keys()
+
+        is_keys_lst1 = False
+        is_keys_lst2 = False
+
+        if keys_lst1 != []:
+            is_keys_lst1 = True
+            print("Keys in 1st:\n")
+            for key in keys_lst1:
+                print('\n--->{}<---\n'.format(key))
+
+        if keys_lst2 != []:
+            is_keys_lst2 = True
+            print("Keys in 2nd:\n")
+            for key in keys_lst2:
+                print('\n--->{}<---\n'.format(key))
+
+        self.assertTrue(is_keys_lst1)
+        self.assertTrue(is_keys_lst2)
     
 if __name__ == '__main__':
     unittest.main()
