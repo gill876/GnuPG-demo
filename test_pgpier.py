@@ -330,5 +330,46 @@ class TestEncrypt(unittest.TestCase):
         self.assertIsNotNone(fp1)
         self.assertIsNotNone(fp2)
     
+    def test_encrypt_decrypt_data(self):
+        print("***Public key encryption and decryption test***")
+
+        original_data = 'HELLO WORLD!'
+
+        # Set key id's
+        self.gpg1.set_keyid()
+        self.gpg2.set_keyid()
+
+        # Export public key to ASCII string
+        pub_key1 = self.gpg1.exp_pub_key()
+        pub_key2 = self.gpg2.exp_pub_key()
+
+        # Import public key
+        self.gpg1.imp_pub_key(pub_key2) # Trade
+        self.gpg2.imp_pub_key(pub_key1) # Trade
+
+        # Get email from class setup
+        email1 = self.__class__.person1_email
+        email2 = self.__class__.person2_email
+
+        # Get fingerprint from email address
+        fp1 = self.gpg1.email_to_key(email1)
+        fp2 = self.gpg2.email_to_key(email2)
+
+        # Trust public keys so that encryption and decryption can happen
+        self.gpg1.trust_key(fp2) # Trade
+        self.gpg2.trust_key(fp1) # Trade
+
+        # Encrypt data from 1st Pgpier using 2nd Pgpier's public key
+        encrypted_data = self.gpg1.encrypt_data(original_data, fp2)
+
+        # Decrypt data using 2nd Pgpier's passphrase to access the keyring
+        passphrase2 = self.gpg2.passphrase
+        decrypted_data = self.gpg2.decrypt_data(encrypted_data, passphrase2)
+
+        print('Original data: --->{}<---\nEncrypted data: --->{}<---\nDecrypted data: --->{}<---'.\
+        format(original_data, encrypted_data, decrypted_data))
+
+        self.assertEqual(original_data, decrypted_data)
+    
 if __name__ == '__main__':
     unittest.main()
