@@ -89,26 +89,34 @@ class TestEncrypt(unittest.TestCase):
     @classmethod
     def tearDownClass(cls):
         print('teardownClass')
-        print('Removing Person1 Pgpier directory: ', cls.main_dir)
+        print('Removing Pgpier main directory: ', cls.main_dir)
         shutil.rmtree(cls.main_dir)
 
     def setUp(self):
         print('setUp')
 
-        print('Retrieve person1 gpg object')
         self.gpg1 = self.__class__.gpg1
-        print(self.gpg1.list_pub_keys())
-
-        """ print('Retrieve person2 gpg object')
-        self.gpg2 = self.__class__.gpg2 """
+        self.gpg2 = self.__class__.gpg2
 
     def tearDown(self):
         print('tearDown\n')
 
-    def test_example(self):
-        with tempfile.TemporaryDirectory() as tmpdirname:
-            print('created temporary directory', tmpdirname)
-        print(self.gpg1.keyid)
+    def test_key_generation(self):
+        """Checks if both Pgpier instances generated their key pairs
+        """
+        print("Key generation test")
+        key_gen1 = False
+        key_gen2 = False
+
+        if self.gpg1.fingerprint != '':
+            key_gen1 = True
+
+        if self.gpg2.fingerprint != '':
+            key_gen2 = True
+        
+        self.assertTrue(key_gen1)
+        self.assertTrue(key_gen2)
+        
     
 if __name__ == '__main__':
     unittest.main()
