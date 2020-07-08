@@ -113,6 +113,24 @@ class TestEncrypt(unittest.TestCase):
 
         if self.gpg2.fingerprint != '':
             key_gen2 = True
+
+        keys1 = self.gpg1.list_pub_keys()
+        keys2 = self.gpg2.list_pub_keys()
+
+        person1_key = False
+        person2_key = False
+        if keys1 != []:
+            for key in keys1:
+                if key['uids'] == ['John Brown (Unit testing with person1) <john_brown_2020_test@gmail.com>']:
+                    person1_key = True
+        
+        if keys2 != []:
+            for key in keys2:
+                if key['uids'] == ['Mary Jane (Unit testing with person2) <mary_jane_2020_test@gmail.com>']:
+                    person2_key = True
+
+        self.assertTrue(person1_key)
+        self.assertTrue(person2_key)
         
         self.assertTrue(key_gen1)
         self.assertTrue(key_gen2)
