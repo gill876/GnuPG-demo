@@ -355,6 +355,8 @@ class TestEncrypt(unittest.TestCase):
         fp1 = self.gpg1.email_to_key(email1)
         fp2 = self.gpg2.email_to_key(email2)
 
+        """Both keys have to be trusted before data can be encrypted using an 
+        imported public key"""
         # Trust public keys so that encryption and decryption can happen
         self.gpg1.trust_key(fp2) # Trade
         self.gpg2.trust_key(fp1) # Trade
