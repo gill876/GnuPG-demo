@@ -30,6 +30,7 @@ class TestEncrypt(unittest.TestCase):
         ######################1st Pgpier######################
         # Create sub directory for 1st Pgpier and change permissions for the directory
         test1 = os.path.join(main_dir, '{}'.format('test1'))
+        cls.test1 = test1
         person1 = os.path.join(test1, '{}'.format('.gnupg'))
         os.makedirs(person1)
         os.chmod(person1, stat.S_IRWXU)
@@ -61,6 +62,7 @@ class TestEncrypt(unittest.TestCase):
         ######################2nd Pgpier######################
         # Create sub directory for 2nd Pgpier and change permissions for the directory
         test2 = os.path.join(main_dir, '{}'.format('test2'))
+        cls.test2 = test2
         person2 = os.path.join(test2, '{}'.format('.gnupg'))
         os.makedirs(person2)
         os.chmod(person2, stat.S_IRWXU)
@@ -97,6 +99,9 @@ class TestEncrypt(unittest.TestCase):
 
         self.gpg1 = self.__class__.gpg1
         self.gpg2 = self.__class__.gpg2
+
+        self.test1_dir = self.__class__.test1
+        self.test2_dir = self.__class__.test2
 
     def tearDown(self):
         print('tearDown\n')
@@ -210,6 +215,48 @@ class TestEncrypt(unittest.TestCase):
 
         self.assertTrue(is_keys_lst1)
         self.assertTrue(is_keys_lst2)
+
+    def test_exp_main(self):
+        print("***Export main test***")
+
+        pass_result1 = False
+        pass_result2 = False
+        
+        wrapper1 = '(ExportTest_1)'
+        wrapper2 = '(ExportTest_2)'
+
+        fingerprint1 = self.gpg1.fingerprint
+        fingerprint2 = self.gpg2.fingerprint
+        passphrase1 = self.gpg1.passphrase
+        passphrase2 = self.gpg2.passphrase
+
+        self.gpg1.exp_main(wrapper1)
+        self.gpg2.exp_main(wrapper2)
+
+        files1 = [f for f in os.listdir(self.test1_dir) if f.endswith(wrapper1) and fingerprint1 in f]
+        files2 = [f for f in os.listdir(self.test2_dir) if f.endswith(wrapper2) and fingerprint2 in f]
+        
+        if files1 != [] and files2 != []:
+            print('\n1st file: {}\n2nd file: {}'.format(files1, files2))
+            
+            with open('{}{}{}'.format(self.test1_dir, os.sep, files1[0]), '{}'.format('r')) as f1:
+                contents1 = f1.read()
+                print('\n\n1st fingerprint: {}'.format(fingerprint1))
+                print('1st contents: {}'.format(contents1))
+                print('1st passphrase: {}'.format(passphrase1))
+                if contents1 == passphrase1:
+                    pass_result1 = True
+            
+            with open('{}{}{}'.format(self.test2_dir, os.sep, files2[0]), '{}'.format('r')) as f2:
+                contents2 = f2.read()
+                print('\n\n2nd fingerprint: {}'.format(fingerprint2))
+                print('2nd contents: {}'.format(contents2))
+                print('2nd passphrase: {}'.format(passphrase2))
+                if contents2 == passphrase2:
+                    pass_result2 = True
+        
+        self.assertTrue(pass_result1)
+        self.assertTrue(pass_result2)
     
 if __name__ == '__main__':
     unittest.main()
