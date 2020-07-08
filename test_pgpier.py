@@ -286,6 +286,31 @@ class TestEncrypt(unittest.TestCase):
 
         self.assertIsNotNone(pub_key1)
         self.assertIsNotNone(pub_key2)
+
+    def test_imp_pub_key(self):
+        print("**Import public key test***")
+
+        self.gpg1.set_keyid()
+        self.gpg2.set_keyid()
+
+        keys_lst1 = self.gpg1.list_pub_keys()
+        keys_lst2 = self.gpg2.list_pub_keys()
+
+        print('First total # keys for 1st Pgpier: {}\nFirst total # keys for 2nd Pgpier: {}'.format(len(keys_lst1), len(keys_lst2)))
+
+        pub_key1 = self.gpg1.exp_pub_key()
+        pub_key2 = self.gpg2.exp_pub_key()
+
+        self.gpg1.imp_pub_key(pub_key2)
+        self.gpg2.imp_pub_key(pub_key1)
+
+        keys_lst1 = self.gpg1.list_pub_keys()
+        keys_lst2 = self.gpg2.list_pub_keys()
+
+        print('Final total # keys for 1st Pgpier: {}\nFinal total # keys for 2nd Pgpier: {}'.format(len(keys_lst1), len(keys_lst2)))
+
+        self.assertEqual(len(keys_lst1), 2)
+        self.assertEqual(len(keys_lst2), 2)
     
 if __name__ == '__main__':
     unittest.main()
