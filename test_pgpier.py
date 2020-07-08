@@ -372,6 +372,33 @@ class TestEncrypt(unittest.TestCase):
         format(original_data, encrypted_data, decrypted_data))
 
         self.assertEqual(original_data, decrypted_data)
+
+    def test_gen_symm_key(self):
+        print("**Generate symmetric key test***")
+
+        string1 = self.gpg1.gen_symm_key()
+        #string2 = self.gpg2.gen_symm_key()
+
+        print('Key: --->{}<---'.format(string1))
+        self.assertEqual(len(string1), 70)
+        self.assertEqual(type(string1), str)
+    
+    def test_symmetric_encrypt_decrypt(self):
+        print("***Symmetric encryption and decryption test***")
+
+        original_data = 'HELLO WORLD!'
+
+        password = self.gpg1.gen_symm_key()
+
+        encrypted_data = self.gpg1.symmetric_encrypt(original_data, password)
+
+        decrypted_data = self.gpg2.symmetric_decrypt(encrypted_data, password)
+
+        print('Original data: --->{}<---\nEncrypted data: --->{}<---\nDecrypted data: --->{}<---'.\
+        format(original_data, encrypted_data, decrypted_data))
+
+        self.assertEqual(original_data, decrypted_data)
+
     
 if __name__ == '__main__':
     unittest.main()
