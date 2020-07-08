@@ -104,7 +104,7 @@ class TestEncrypt(unittest.TestCase):
     def test_key_generation(self):
         """Checks if both Pgpier instances generated their key pairs
         """
-        print("Key generation test")
+        print("***Key generation test***")
         key_gen1 = False
         key_gen2 = False
 
@@ -136,7 +136,7 @@ class TestEncrypt(unittest.TestCase):
         self.assertTrue(key_gen2)
         
     def test_set_passphrase(self):
-        print("Set passphrase test")
+        print("***Set passphrase test***")
 
         prev_passphrase1 = self.gpg1.passphrase
         prev_passphrase2 = self.gpg2.passphrase
@@ -173,7 +173,7 @@ class TestEncrypt(unittest.TestCase):
         self.assertEqual(set_passphrase2, prev_passphrase2)
 
     def test_set_keyid(self):
-        print("Set keyid test")
+        print("***Set keyid test***")
 
         self.gpg1.set_keyid()
         self.gpg2.set_keyid()
