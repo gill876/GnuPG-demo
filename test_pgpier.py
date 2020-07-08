@@ -40,6 +40,7 @@ class TestEncrypt(unittest.TestCase):
 
         # Variables for 1st key pair generation
         wrapper1 = '(Person1)'
+        cls.wrapper1 = wrapper1
         person1_name = 'John Brown'
         person1_email = 'john_brown_2020_test@gmail.com'
         person1_comment = 'Unit testing with person1'
@@ -71,6 +72,7 @@ class TestEncrypt(unittest.TestCase):
         gpg2 = pgp.Pgpier(person2)
         
         wrapper2 = '(Person2)'
+        cls.wrapper2 = wrapper2
         person2_name = 'Mary Jane'
         person2_email = 'mary_jane_2020_test@gmail.com'
         person2_comment = 'Unit testing with person2'
@@ -102,6 +104,9 @@ class TestEncrypt(unittest.TestCase):
 
         self.test1_dir = self.__class__.test1
         self.test2_dir = self.__class__.test2
+
+        self.wrapper1 = self.__class__.wrapper1
+        self.wrapper2 = self.__class__.wrapper2
 
     def tearDown(self):
         print('tearDown\n')
@@ -257,6 +262,16 @@ class TestEncrypt(unittest.TestCase):
         
         self.assertTrue(pass_result1)
         self.assertTrue(pass_result2)
+
+    def test_set_from_imp(self):
+        print("Set from import test")
+
+        print('1st Pgpier wrapper: {}\n2nd Pgpier wrapper: {}'.format(self.wrapper1, self.wrapper2))
+        result1 = self.gpg1.set_from_imp(self.wrapper1)
+        result2 = self.gpg2.set_from_imp(self.wrapper2)
+
+        self.assertTrue(result1)
+        self.assertTrue(result2)
     
 if __name__ == '__main__':
     unittest.main()
