@@ -45,6 +45,7 @@ class Pgpier:
         input_data = self.gpg.gen_key_input(key_type=_key_type, key_length=_key_length, name_real=_name_real, name_comment=_name_comment, name_email=_name_email, passphrase=self.passphrase)
         #generation of key pair
         key = self.gpg.gen_key(input_data)
+        #print("stderr: ", key.stderr)
         self.fingerprint = key.fingerprint #store fingerprint in class
 
     def set_passphrase(self, passphrase):

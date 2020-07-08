@@ -28,21 +28,25 @@ class TestEncrypt(unittest.TestCase):
         ####################################################
         
         ######################1st Pgpier######################
+        # Create sub directory for 1st Pgpier and change permissions for the directory
         test1 = os.path.join(main_dir, '{}'.format('test1'))
         person1 = os.path.join(test1, '{}'.format('.gnupg'))
         os.makedirs(person1)
         os.chmod(person1, stat.S_IRWXU)
 
+        # Create Pgpier class
         gpg1 = pgp.Pgpier(person1)
 
+        # Variables for 1st key pair generation
         wrapper1 = '(Person1)'
         person1_name = 'John Brown'
         person1_email = 'john_brown_2020_test@gmail.com'
         person1_comment = 'Unit testing with person1'
 
+        # Checks if a passphrase has been exported already
         result1 = gpg1.set_from_imp(wrapper1)
 
-        if not result1:
+        if not result1: # If passphrase has not been export, a new key pair will be generated
             gpg1.key_pair(person1_email, person1_name, person1_comment)
             gpg1.exp_main(wrapper1)
             cls.gpg1 = gpg1
@@ -55,28 +59,32 @@ class TestEncrypt(unittest.TestCase):
         ####################################################
 
         ######################2nd Pgpier######################
-        
-        """ person2 = os.path.join(main_dir2, '{}'.format('.gnupg'))
-        os.mkdir(person2)
-        cls.person2 = person2
-        gpg2 = Pgpier(person2)
+        # Create sub directory for 2nd Pgpier and change permissions for the directory
+        test2 = os.path.join(main_dir, '{}'.format('test2'))
+        person2 = os.path.join(test2, '{}'.format('.gnupg'))
+        os.makedirs(person2)
+        os.chmod(person2, stat.S_IRWXU)
+
+        # Create Pgpier class
+        gpg2 = pgp.Pgpier(person2)
         
         wrapper2 = '(Person2)'
         person2_name = 'Mary Jane'
         person2_email = 'mary_jane_2020_test@gmail.com'
         person2_comment = 'Unit testing with person2'
 
+        # Checks if a passphrase has been exported already
         result2 = gpg2.set_from_imp(wrapper2)
 
-        if not result2:
+        if not result2: # If passphrase has not been export, a new key pair will be generated
             gpg2.key_pair(person2_email, person2_name, person2_comment)
             gpg2.exp_main(wrapper2)
             cls.gpg2 = gpg2
         print("***\nPerson2 Pgpier directory and key pair generated in: ", person2,
             "\nName: ", person2_name, "\nEmail: ", person2_email,
             "\nComment: ", person2_comment, "\n***"
-        ) """
-    
+        )
+        ####################################################
 
     @classmethod
     def tearDownClass(cls):
