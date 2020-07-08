@@ -154,6 +154,22 @@ class TestEncrypt(unittest.TestCase):
         self.assertEqual(set_passphrase1, prev_passphrase1)
         self.assertEqual(set_passphrase2, prev_passphrase2)
 
+    def test_set_keyid(self):
+        print("Set keyid test")
+
+        self.gpg1.set_keyid()
+        self.gpg2.set_keyid()
+
+        keyid1 = self.gpg1.keyid
+        keyid2 = self.gpg2.keyid
+
+        print('Key id for 1st Pgpier: {}'.format(keyid1))
+        print('Key id for 2nd Pgpier: {}'.format(keyid2))
+
+        self.assertIsNotNone(keyid1)
+        self.assertIsNotNone(keyid2)
+
+
     
 if __name__ == '__main__':
     unittest.main()
