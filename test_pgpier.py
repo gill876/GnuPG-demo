@@ -264,7 +264,7 @@ class TestEncrypt(unittest.TestCase):
         self.assertTrue(pass_result2)
 
     def test_set_from_imp(self):
-        print("Set from import test")
+        print("Set from import and import main test")
 
         print('1st Pgpier wrapper: {}\n2nd Pgpier wrapper: {}'.format(self.wrapper1, self.wrapper2))
         result1 = self.gpg1.set_from_imp(self.wrapper1)
