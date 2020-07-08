@@ -117,6 +117,43 @@ class TestEncrypt(unittest.TestCase):
         self.assertTrue(key_gen1)
         self.assertTrue(key_gen2)
         
+    def test_set_passphrase(self):
+        print("Set passphrase test")
+
+        prev_passphrase1 = self.gpg1.passphrase
+        prev_passphrase2 = self.gpg2.passphrase
+
+        print('Previous passphrase for 1st Pgpier: {}'.format(prev_passphrase1))
+        print('Previous passphrase for 2nd Pgpier: {}'.format(prev_passphrase2))
+
+        next_passphrase1 = 'password-123'
+        next_passphrase2 = 'password-abc'
+
+        print('Next passphrase for 1st Pgpier: {}'.format(next_passphrase1))
+        print('Next passphrase for 2nd Pgpier: {}'.format(next_passphrase2))
+
+        self.gpg1.set_passphrase(next_passphrase1)
+        self.gpg2.set_passphrase(next_passphrase2)
+
+        set_passphrase1 = self.gpg1.passphrase
+        set_passphrase2 = self.gpg2.passphrase
+
+        print('Set passphrase for 1st Pgpier: {}'.format(set_passphrase1))
+        print('Set passphrase for 2nd Pgpier: {}'.format(set_passphrase2))
+
+        self.assertEqual(set_passphrase1, next_passphrase1)
+        self.assertEqual(set_passphrase2, next_passphrase2)
+
+        print("Restoring previous passphrase...")
+        self.gpg1.set_passphrase(prev_passphrase1)
+        self.gpg2.set_passphrase(prev_passphrase2)
+
+        set_passphrase1 = self.gpg1.passphrase
+        set_passphrase2 = self.gpg2.passphrase
+
+        self.assertEqual(set_passphrase1, prev_passphrase1)
+        self.assertEqual(set_passphrase2, prev_passphrase2)
+
     
 if __name__ == '__main__':
     unittest.main()
