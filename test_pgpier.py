@@ -43,6 +43,7 @@ class TestEncrypt(unittest.TestCase):
         cls.wrapper1 = wrapper1
         person1_name = 'John Brown'
         person1_email = 'john_brown_2020_test@gmail.com'
+        cls.person1_email = person1_email
         person1_comment = 'Unit testing with person1'
 
         # Checks if a passphrase has been exported already
@@ -75,6 +76,7 @@ class TestEncrypt(unittest.TestCase):
         cls.wrapper2 = wrapper2
         person2_name = 'Mary Jane'
         person2_email = 'mary_jane_2020_test@gmail.com'
+        cls.person2_email = person2_email
         person2_comment = 'Unit testing with person2'
 
         # Checks if a passphrase has been exported already
@@ -311,6 +313,22 @@ class TestEncrypt(unittest.TestCase):
 
         self.assertEqual(len(keys_lst1), 2)
         self.assertEqual(len(keys_lst2), 2)
+
+    def test_email_to_key(self):
+        print("***Email to key test***")
+
+        email1 = self.__class__.person1_email
+        email2 = self.__class__.person2_email
+
+        fp1 = self.gpg1.email_to_key(email1)
+        fp2 = self.gpg2.email_to_key(email2)
+
+        print('1st Pgpier email --->{}<--- is associated with fingerprint \
+        --->{}<---\n2nd Pgpier email --->{}<--- is associated with fingerprint \
+        --->{}<---'.format(email1, fp1, email2, fp2))
+
+        self.assertIsNotNone(fp1)
+        self.assertIsNotNone(fp2)
     
 if __name__ == '__main__':
     unittest.main()
